@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 
 @Repository
 @Transactional
@@ -19,11 +20,16 @@ public class PautaDaoImpl implements PautaDao {
 
     @Override
     public Pauta getPautaByCodigo(String codPauta) {
-        Pauta pauta = entityManager
-                .createQuery("SELECT p FROM Pauta p where p.codigo = :codPauta", Pauta.class)
-                .setParameter("codPauta", codPauta)
-                .getSingleResult();
-        return pauta;
+        try {
+            Pauta pauta = entityManager
+                    .createQuery("SELECT p FROM Pauta p where p.codigo = :codPauta", Pauta.class)
+                    .setParameter("codPauta", codPauta)
+                    .getSingleResult();
+
+            return pauta;
+        }catch (NoResultException e){
+            return null;
+        }
     }
 
     @Override
@@ -37,12 +43,17 @@ public class PautaDaoImpl implements PautaDao {
 
     @Override
     public Voto getVotoByPautaEAssociado(String codPauta, Integer codAssociado) {
-        Voto voto = entityManager
+        try {
+            Voto voto = entityManager
                 .createQuery("SELECT v FROM Voto v where v.pauta.codigo = :codPauta AND v.codAssociado= :codAssociado", Voto.class)
                 .setParameter("codPauta", codPauta)
                 .setParameter("codAssociado", codAssociado)
                 .getSingleResult();
-        return voto;
+
+            return voto;
+        }catch (NoResultException e){
+            return null;
+        }
     }
 
     @Override

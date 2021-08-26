@@ -22,38 +22,22 @@ public class PautaController {
 
     @RequestMapping(value = {"/"}, method = RequestMethod.POST)
     public ResponseEntity criarPauta(@Valid @RequestBody PautaHolder pautaHolder) {
-        try {
-            pautaService.criarPauta(pautaHolder);
-            return ResponseEntity.accepted().build();
-        }catch (Exception e) {
-            //validar mensagem de retorno caso erro (Pauta já existente)
-            logger.error("Erro ao criar pauta: " +  pautaHolder.getCodigo(), e);
-            return ResponseEntity.badRequest().build();
-        }
+        pautaService.criarPauta(pautaHolder);
+        return ResponseEntity.accepted().build();
     }
 
     @RequestMapping(value = {"/iniciarVotacao/"}, method = RequestMethod.GET)
     public ResponseEntity inicarVotacao(
             @RequestParam(value = "codPauta", required = true) final String codPauta,
             @RequestParam(value = "tempoSessao", defaultValue = "1", required = false) final Integer tempoSessao) {
-        try {
-            pautaService.inicarVotacao(codPauta, tempoSessao);
-            return ResponseEntity.accepted().build();
-        }catch (Exception e) {
-            logger.error("Erro ao iniciar votação: " +  codPauta, e);
-            return ResponseEntity.badRequest().build();
-        }
+        pautaService.inicarVotacao(codPauta, tempoSessao);
+        return ResponseEntity.accepted().build();
     }
 
     @RequestMapping(value = {"/votarPauta"}, method = RequestMethod.POST)
     public ResponseEntity votarPauta(@Valid @RequestBody VotoHolder votoHolder){
-        try {
-            pautaService.votarPauta(votoHolder);
-            return ResponseEntity.accepted().build();
-        }catch (Exception e) {
-            logger.error("Erro ao votar pauta: " +  votoHolder.getCodPauta(), e);
-            return ResponseEntity.badRequest().build();
-        }
+        pautaService.votarPauta(votoHolder);
+        return ResponseEntity.accepted().build();
     }
 
     @RequestMapping(value = {"/"}, method = RequestMethod.GET)

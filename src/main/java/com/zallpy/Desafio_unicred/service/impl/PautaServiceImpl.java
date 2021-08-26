@@ -1,6 +1,7 @@
 package com.zallpy.Desafio_unicred.service.impl;
 
 import com.zallpy.Desafio_unicred.dao.PautaDao;
+import com.zallpy.Desafio_unicred.exception.holder.CustomException;
 import com.zallpy.Desafio_unicred.holder.Enum.EnumStatusPauta;
 import com.zallpy.Desafio_unicred.holder.PautaHolder;
 import com.zallpy.Desafio_unicred.holder.VotoHolder;
@@ -22,7 +23,7 @@ public class PautaServiceImpl implements PautaService {
     public void criarPauta(final PautaHolder pautaHolder) {
         final Pauta pauta = pautaDao.getPautaByCodigo(pautaHolder.getCodigo());
         if(pauta != null) {
-            //TODO return exception, pauta já existente
+            throw new CustomException("Pauta já existente, code: " + pautaHolder.getCodigo());
         }else{
             final Pauta novaPauta = getPautaByHolder(pautaHolder);
             pautaDao.salvarPauta(novaPauta);
@@ -42,12 +43,12 @@ public class PautaServiceImpl implements PautaService {
                 pautaDao.salvarPauta(pauta);
 
             }else if(EnumStatusPauta.EM_VOTACAO.equals(pauta.getEnumStatusPauta())) {
-                //TODO votação em andamento
+                throw new CustomException("Pauta já possui votação em andamento, code: " + codPauta);
             }else {
-                //TODO pauta finalizada
+                throw new CustomException("Votação já finalizada, pauta código: " + codPauta + ", status: " + pauta.getEnumStatusPauta().getStatus());
             }
         }else{
-            //TODO return exception, pauta inexistente
+            throw new CustomException("Pauta inexistente, code: " + codPauta);
         }
     }
 
@@ -58,16 +59,16 @@ public class PautaServiceImpl implements PautaService {
             if(EnumStatusPauta.EM_VOTACAO.equals(pauta.getEnumStatusPauta()) && pauta.getDtFimVotacao().isAfter(LocalDateTime.now())) {
                 final Voto voto = pautaDao.getVotoByPautaEAssociado(votoHolder.getCodPauta(), votoHolder.getCodAssociado());
                 if(voto != null) {
-                    //TODO usuario já votou, retorna erro
+                    throw new CustomException("Voto do usuário já computado, pauta: " + votoHolder.getCodPauta());
                 }else{
                     final Voto novoVoto = getVotoByHolder(votoHolder, pauta);
                     pautaDao.salvarVoto(novoVoto);
                 }
             }else{
-                //TODO Pauta não está em sessão
+                throw new CustomException("Pauta não está em sessão aberta: " + votoHolder.getCodPauta());
             }
         }else{
-            //TODO Pauta inexistente
+            throw new CustomException("Pauta inexistente, code: " + votoHolder.getCodPauta());
         }
 
     }
@@ -79,8 +80,7 @@ public class PautaServiceImpl implements PautaService {
             PautaHolder pautaHolder = pauta.getPautaHolder();
             return pautaHolder;
         }else{
-            //TODO pauta inexistente
-            return null;
+            throw new CustomException("Pauta inexistente, code: " + codPauta);
         }
     }
 
@@ -98,7 +98,7 @@ public class PautaServiceImpl implements PautaService {
         pauta.setCodigo(pautaHolder.getCodigo());
         pauta.setDescricao(pautaHolder.getDescricao());
         pauta.setNome(pautaHolder.getNome());
-        pauta.setEnumStatusPauta(pautaHolder.getStatusPauta());
+        pauta.setEnumStatusPauta(EnumStatusPauta.AGUARDANDO);
         return pauta;
     }
 }
