@@ -1,17 +1,18 @@
 package com.zallpy.Desafio_unicred.holder;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
 public class VotoHolder implements Serializable {
 
-    @NotBlank(message = "codAssociado deve ser preenchido")
+    @NotNull(message = "codAssociado deve ser preenchido")
     private Integer codAssociado;
 
     @NotBlank(message = "codPauta deve ser preenchido")
     private String codPauta;
 
-    @NotBlank(message = "voto deve ser preenchido")
+    @NotNull(message = "voto deve ser preenchido")
     private Boolean voto;
 
     public Integer getCodAssociado() {

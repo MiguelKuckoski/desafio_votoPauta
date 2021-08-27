@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.time.LocalDateTime;
 
 @RestController
 @RequestMapping("/api/v1/pauta")
@@ -20,27 +21,27 @@ public class PautaController {
     @Autowired
     private PautaService pautaService;
 
-    @RequestMapping(value = {"/"}, method = RequestMethod.POST)
+    @RequestMapping(value = {""}, method = RequestMethod.POST)
     public ResponseEntity criarPauta(@Valid @RequestBody PautaHolder pautaHolder) {
         pautaService.criarPauta(pautaHolder);
-        return ResponseEntity.accepted().build();
+        return ResponseEntity.ok("Pauta cadastrada com sucesso");
     }
 
-    @RequestMapping(value = {"/iniciarVotacao/"}, method = RequestMethod.GET)
+    @RequestMapping(value = {"/iniciarVotacao"}, method = RequestMethod.GET)
     public ResponseEntity inicarVotacao(
             @RequestParam(value = "codPauta", required = true) final String codPauta,
             @RequestParam(value = "tempoSessao", defaultValue = "1", required = false) final Integer tempoSessao) {
-        pautaService.inicarVotacao(codPauta, tempoSessao);
-        return ResponseEntity.accepted().build();
+        LocalDateTime dtFim = pautaService.inicarVotacao(codPauta, tempoSessao);
+        return ResponseEntity.ok("Votação aberta até: " + dtFim);
     }
 
     @RequestMapping(value = {"/votarPauta"}, method = RequestMethod.POST)
     public ResponseEntity votarPauta(@Valid @RequestBody VotoHolder votoHolder){
         pautaService.votarPauta(votoHolder);
-        return ResponseEntity.accepted().build();
+        return ResponseEntity.ok("Voto computado");
     }
 
-    @RequestMapping(value = {"/"}, method = RequestMethod.GET)
+    @RequestMapping(value = {""}, method = RequestMethod.GET)
     public ResponseEntity consultarPauta(@RequestParam(value = "codPauta", required = true) final String codPauta) {
         PautaHolder pauta = pautaService.getPautaByCodigo(codPauta);
         return ResponseEntity.ok(pauta);

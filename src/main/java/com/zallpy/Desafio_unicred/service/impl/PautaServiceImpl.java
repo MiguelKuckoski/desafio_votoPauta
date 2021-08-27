@@ -9,6 +9,7 @@ import com.zallpy.Desafio_unicred.model.Pauta;
 import com.zallpy.Desafio_unicred.model.Voto;
 import com.zallpy.Desafio_unicred.service.PautaService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -23,7 +24,7 @@ public class PautaServiceImpl implements PautaService {
     public void criarPauta(final PautaHolder pautaHolder) {
         final Pauta pauta = pautaDao.getPautaByCodigo(pautaHolder.getCodigo());
         if(pauta != null) {
-            throw new CustomException("Pauta já existente, code: " + pautaHolder.getCodigo());
+            throw new CustomException("Pauta já existente, code: " + pautaHolder.getCodigo(), HttpStatus.BAD_REQUEST);
         }else{
             final Pauta novaPauta = getPautaByHolder(pautaHolder);
             pautaDao.salvarPauta(novaPauta);
@@ -31,7 +32,7 @@ public class PautaServiceImpl implements PautaService {
     }
 
     @Override
-    public void inicarVotacao(String codPauta, Integer tempoSessao) {
+    public LocalDateTime inicarVotacao(String codPauta, Integer tempoSessao) {
         final Pauta pauta = pautaDao.getPautaByCodigo(codPauta);
         if(pauta != null ) {
             if(EnumStatusPauta.AGUARDANDO.equals(pauta.getEnumStatusPauta())) {
@@ -40,15 +41,17 @@ public class PautaServiceImpl implements PautaService {
 
                 pauta.setDtInicioVotacao(inicioVotacao);
                 pauta.setDtFimVotacao(fimVotacao);
+                pauta.setEnumStatusPauta(EnumStatusPauta.EM_VOTACAO);
                 pautaDao.salvarPauta(pauta);
 
+                return fimVotacao;
             }else if(EnumStatusPauta.EM_VOTACAO.equals(pauta.getEnumStatusPauta())) {
-                throw new CustomException("Pauta já possui votação em andamento, code: " + codPauta);
+                throw new CustomException("Pauta já possui votação em andamento até: " + pauta.getDtFimVotacao(), HttpStatus.BAD_REQUEST);
             }else {
-                throw new CustomException("Votação já finalizada, pauta código: " + codPauta + ", status: " + pauta.getEnumStatusPauta().getStatus());
+                throw new CustomException("Votação finalizada em: " + pauta.getDtFimVotacao() + ", status: " + pauta.getEnumStatusPauta().getStatus(), HttpStatus.BAD_REQUEST);
             }
         }else{
-            throw new CustomException("Pauta inexistente, code: " + codPauta);
+            throw new CustomException("Pauta inexistente, code: " + codPauta, HttpStatus.NOT_FOUND);
         }
     }
 
@@ -59,16 +62,16 @@ public class PautaServiceImpl implements PautaService {
             if(EnumStatusPauta.EM_VOTACAO.equals(pauta.getEnumStatusPauta()) && pauta.getDtFimVotacao().isAfter(LocalDateTime.now())) {
                 final Voto voto = pautaDao.getVotoByPautaEAssociado(votoHolder.getCodPauta(), votoHolder.getCodAssociado());
                 if(voto != null) {
-                    throw new CustomException("Voto do usuário já computado, pauta: " + votoHolder.getCodPauta());
+                    throw new CustomException("Voto do usuário já computado, pauta: " + votoHolder.getCodPauta(), HttpStatus.BAD_REQUEST);
                 }else{
                     final Voto novoVoto = getVotoByHolder(votoHolder, pauta);
                     pautaDao.salvarVoto(novoVoto);
                 }
             }else{
-                throw new CustomException("Pauta não está em sessão aberta: " + votoHolder.getCodPauta());
+                throw new CustomException("Pauta não está em sessão aberta: " + votoHolder.getCodPauta(), HttpStatus.BAD_REQUEST);
             }
         }else{
-            throw new CustomException("Pauta inexistente, code: " + votoHolder.getCodPauta());
+            throw new CustomException("Pauta inexistente, code: " + votoHolder.getCodPauta(), HttpStatus.NOT_FOUND);
         }
 
     }
@@ -80,7 +83,7 @@ public class PautaServiceImpl implements PautaService {
             PautaHolder pautaHolder = pauta.getPautaHolder();
             return pautaHolder;
         }else{
-            throw new CustomException("Pauta inexistente, code: " + codPauta);
+            throw new CustomException("Pauta inexistente, code: " + codPauta, HttpStatus.NOT_FOUND);
         }
     }
 

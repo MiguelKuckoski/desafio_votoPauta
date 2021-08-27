@@ -17,9 +17,9 @@ public class RestExceptionHandler {
     public ResponseEntity<?> handleException(CustomException e) {
         Map<String, Object> body = new LinkedHashMap<>();
         body.put("timestamp", new Date());
-        body.put("status", HttpStatus.BAD_REQUEST);
+        body.put("status", e.getHttpStatus());
         body.put("error", e.getMessage());
 
-        return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(body, e.getHttpStatus());
     }
 }
