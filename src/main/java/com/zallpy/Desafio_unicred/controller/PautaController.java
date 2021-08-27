@@ -21,7 +21,7 @@ public class PautaController {
     @Autowired
     private PautaService pautaService;
 
-    @RequestMapping(value = {""}, method = RequestMethod.POST)
+    @RequestMapping(value = {""}, method = RequestMethod.POST, consumes="application/json")
     public ResponseEntity criarPauta(@Valid @RequestBody PautaHolder pautaHolder) {
         pautaService.criarPauta(pautaHolder);
         return ResponseEntity.ok("Pauta cadastrada com sucesso");
@@ -35,7 +35,7 @@ public class PautaController {
         return ResponseEntity.ok("Votação aberta até: " + dtFim);
     }
 
-    @RequestMapping(value = {"/votarPauta"}, method = RequestMethod.POST)
+    @RequestMapping(value = {"/votarPauta"}, method = RequestMethod.POST, consumes="application/json")
     public ResponseEntity votarPauta(@Valid @RequestBody VotoHolder votoHolder){
         pautaService.votarPauta(votoHolder);
         return ResponseEntity.ok("Voto computado");
