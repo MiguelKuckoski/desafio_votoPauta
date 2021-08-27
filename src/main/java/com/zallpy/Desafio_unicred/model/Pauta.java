@@ -5,6 +5,7 @@ import com.zallpy.Desafio_unicred.holder.PautaHolder;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity(name = "Pauta")
 @Table(name = "TB_PAUTA")
@@ -21,11 +22,15 @@ public class Pauta {
 
     private String descricao;
 
+    @Column(name = "status_pauta")
     private EnumStatusPauta enumStatusPauta;
 
     private LocalDateTime dtInicioVotacao;
 
     private LocalDateTime dtFimVotacao;
+
+    @OneToMany(mappedBy = "pauta", cascade = CascadeType.ALL)
+    private List<Voto> votos;
 
     @Transient
     private PautaHolder pautaHolder;
@@ -103,4 +108,11 @@ public class Pauta {
         this.pautaHolder = pautaHolder;
     }
 
+    public List<Voto> getVotos() {
+        return votos;
+    }
+
+    public void setVotos(List<Voto> votos) {
+        this.votos = votos;
+    }
 }

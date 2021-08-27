@@ -2,7 +2,7 @@ package com.zallpy.Desafio_unicred.model;
 
 import javax.persistence.*;
 
-@Entity
+@Entity(name = "Voto")
 @Table(name = "TB_VOTO")
 public class Voto {
 

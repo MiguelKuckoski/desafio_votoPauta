@@ -13,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 public class PautaServiceImpl implements PautaService {
@@ -27,7 +28,7 @@ public class PautaServiceImpl implements PautaService {
             throw new CustomException("Pauta já existente, code: " + pautaHolder.getCodigo(), HttpStatus.BAD_REQUEST);
         }else{
             final Pauta novaPauta = getPautaByHolder(pautaHolder);
-            pautaDao.salvarPauta(novaPauta);
+            salvarPauta(novaPauta);
         }
     }
 
@@ -42,7 +43,7 @@ public class PautaServiceImpl implements PautaService {
                 pauta.setDtInicioVotacao(inicioVotacao);
                 pauta.setDtFimVotacao(fimVotacao);
                 pauta.setEnumStatusPauta(EnumStatusPauta.EM_VOTACAO);
-                pautaDao.salvarPauta(pauta);
+                salvarPauta(pauta);
 
                 return fimVotacao;
             }else if(EnumStatusPauta.EM_VOTACAO.equals(pauta.getEnumStatusPauta())) {
@@ -85,6 +86,16 @@ public class PautaServiceImpl implements PautaService {
         }else{
             throw new CustomException("Pauta inexistente, code: " + codPauta, HttpStatus.NOT_FOUND);
         }
+    }
+
+    @Override
+    public List<Pauta> getPautasPendentesConclusao() {
+        return pautaDao.getPautasPendentesConclusao();
+    }
+
+    @Override
+    public void salvarPauta(Pauta pauta) {
+        pautaDao.salvarPauta(pauta);
     }
 
     private Voto getVotoByHolder(VotoHolder votoHolder, Pauta pauta) {
