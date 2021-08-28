@@ -18,6 +18,16 @@ public class Voto {
 
     private Boolean voto;
 
+    public Voto(Integer id, Integer codAssociado, Boolean voto) {
+        this.id = id;
+        this.codAssociado = codAssociado;
+        this.voto = voto;
+    }
+
+    public Voto() {
+
+    }
+
     public Integer getId() {
         return id;
     }

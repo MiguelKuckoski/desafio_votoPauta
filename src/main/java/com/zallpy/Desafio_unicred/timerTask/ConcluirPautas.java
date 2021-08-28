@@ -15,8 +15,8 @@ import java.util.List;
 @Component @EnableScheduling
 public class ConcluirPautas {
 
-    private final long SEGUNDO = 1000;
-    private final long MINUTO = SEGUNDO * 60;
+    private static final long SEGUNDO = 1000;
+    private static final long MINUTO = SEGUNDO * 60;
 
     @Autowired
     private PautaService pautaService;

@@ -74,7 +74,6 @@ public class PautaServiceImpl implements PautaService {
         }else{
             throw new CustomException("Pauta inexistente, code: " + votoHolder.getCodPauta(), HttpStatus.NOT_FOUND);
         }
-
     }
 
     @Override

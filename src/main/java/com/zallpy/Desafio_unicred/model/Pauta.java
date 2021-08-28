@@ -35,6 +35,19 @@ public class Pauta {
     @Transient
     private PautaHolder pautaHolder;
 
+    public Pauta(Integer id, String nome, String codigo, EnumStatusPauta enumStatusPauta, LocalDateTime dtInicioVotacao, LocalDateTime dtFimVotacao) {
+        this.id = id;
+        this.nome = nome;
+        this.codigo = codigo;
+        this.enumStatusPauta = enumStatusPauta;
+        this.dtInicioVotacao = dtInicioVotacao;
+        this.dtFimVotacao = dtFimVotacao;
+    }
+
+    public Pauta() {
+
+    }
+
     public LocalDateTime getDtInicioVotacao() {
         return dtInicioVotacao;
     }
